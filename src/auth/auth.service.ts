@@ -28,9 +28,8 @@ export class AuthService {
     const user = await this.db
       .select({
         nickname: schema.users.nickname,
-        level: schema.users.firstName,
+        level: schema.users.level,
         email: schema.users.email,
-        photoPath: schema.users.photoPath,
         wallet: schema.users.wallet,
       })
       .from(schema.users)

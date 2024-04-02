@@ -25,10 +25,4 @@ export class AuthController {
     const accessToken = req.headers.authorization.split(' ')[1];
     return await this.authService.getProfile(accessToken);
   }
-
-  @Get('teste123')
-  @UseGuards(AuthGuard('jwt'))
-  async test123(@Res() res) {
-    res.json('success');
-  }
 }
