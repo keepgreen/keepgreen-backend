@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "35b489e7-4502-4022-ab19-0d5dc0f94694",
+  "id": "d51def09-9e49-4a52-ad0a-3d4dc132bed7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -28,6 +28,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "nickname": {
+          "name": "nickname",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "firstName": {
           "name": "firstName",
           "type": "varchar(50)",
@@ -50,12 +57,13 @@
           "autoincrement": false,
           "default": "'customer'"
         },
-        "google_hash": {
-          "name": "google_hash",
-          "type": "varchar(256)",
+        "level": {
+          "name": "level",
+          "type": "int",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": 1
         },
         "okto_hash": {
           "name": "okto_hash",
@@ -110,12 +118,6 @@
           "name": "users_email_unique",
           "columns": [
             "email"
-          ]
-        },
-        "users_google_hash_unique": {
-          "name": "users_google_hash_unique",
-          "columns": [
-            "google_hash"
           ]
         },
         "users_okto_hash_unique": {
