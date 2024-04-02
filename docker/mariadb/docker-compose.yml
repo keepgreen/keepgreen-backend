@@ -6,9 +6,3 @@ services:
       - 3306:3306
     environment:
       MARIADB_ROOT_PASSWORD: 'qwerty'
-    
-# adminer:
-#   image: adminer
-#   restart: always
-#   ports:
-#     - 3005:8080
