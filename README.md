@@ -29,11 +29,13 @@ cd ../../
 cp .env.example .env
 
 # don't forget to update .env with your own variables.
-```
 
-```bash
 # run migrate schema to mariadb
 $ npm run db:push
+```
+
+### Start project
+```bash
 
 # development
 $ npm run start
