@@ -18,11 +18,4 @@ export class AuthController {
     const response = await this.authService.signInGoogle(req.user);
     res.json(response);
   }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('profile')
-  async getProfile(@Request() req) {
-    const accessToken = req.headers.authorization.split(' ')[1];
-    return await this.authService.getProfile(accessToken);
-  }
 }

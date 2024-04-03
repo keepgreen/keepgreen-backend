@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Res,
   Req,
+  Get,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
@@ -35,5 +36,12 @@ export class UserController {
   ) {
     await this.userService.checkNickname(userNicknameDto);
     return res.status(HttpStatus.OK).send('nickname available.');
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profile')
+  async getProfile(@Req() req) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+    return await this.userService.getProfile(accessToken);
   }
 }

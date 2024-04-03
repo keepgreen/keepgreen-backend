@@ -21,25 +21,6 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async getProfile(accessToken) {
-    const decoded = this.jwtService.decode(accessToken);
-    const id = decoded.sub;
-
-    const user = await this.db
-      .select({
-        nickname: schema.users.nickname,
-        level: schema.users.level,
-        email: schema.users.email,
-        wallet: schema.users.wallet,
-      })
-      .from(schema.users)
-      .where(eq(schema.users.id, id));
-
-    if (user.length === 0) throw new BadRequestException('User not Found.');
-
-    return user[0];
-  }
-
   async isTokenExpired(token: string): Promise<boolean> {
     try {
       const url = this.configService.get<string>('GOOGLE_TOKEN_INFO_URL');
