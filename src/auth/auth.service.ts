@@ -12,6 +12,7 @@ import * as schema from 'src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { init } from '@paralleldrive/cuid2';
 
 @Injectable()
 export class AuthService {
@@ -68,11 +69,18 @@ export class AuthService {
 
   async registerUser(user) {
     try {
+      const createId = init({
+        random: Math.random,
+        length: 10,
+        fingerprint: 'keepgreen',
+      });
+      const referralCode = createId();
       const newUser = {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         photoPath: user.picture,
+        referral: referralCode,
       };
 
       await this.db.insert(schema.users).values(newUser);

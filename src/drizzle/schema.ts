@@ -10,6 +10,7 @@ export const users = mysqlTable('users', {
   nickname: varchar('nickname', { length: 100 }),
   firstName: varchar('firstName', { length: 50 }),
   familyName: varchar('familyName', { length: 256 }),
+  referral: varchar('referral', { length: 25 }).unique(),
   role: varchar('role', { length: 15, enum: ['customer', 'manager'] })
     .default('customer')
     .notNull(),

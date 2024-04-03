@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "d51def09-9e49-4a52-ad0a-3d4dc132bed7",
+  "id": "ce3215c5-87ca-4f89-9229-ed124e038111",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -45,6 +45,13 @@
         "familyName": {
           "name": "familyName",
           "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "referral": {
+          "name": "referral",
+          "type": "varchar(25)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -118,6 +125,12 @@
           "name": "users_email_unique",
           "columns": [
             "email"
+          ]
+        },
+        "users_referral_unique": {
+          "name": "users_referral_unique",
+          "columns": [
+            "referral"
           ]
         },
         "users_okto_hash_unique": {

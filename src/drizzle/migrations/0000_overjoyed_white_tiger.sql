@@ -5,6 +5,7 @@ CREATE TABLE `users` (
 	`nickname` varchar(100),
 	`firstName` varchar(50),
 	`familyName` varchar(256),
+	`referral` varchar(25),
 	`role` varchar(15) NOT NULL DEFAULT 'customer',
 	`level` int DEFAULT 1,
 	`okto_hash` varchar(256),
@@ -14,6 +15,7 @@ CREATE TABLE `users` (
 	`updated_at` timestamp DEFAULT (now()),
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_email_unique` UNIQUE(`email`),
+	CONSTRAINT `users_referral_unique` UNIQUE(`referral`),
 	CONSTRAINT `users_okto_hash_unique` UNIQUE(`okto_hash`),
 	CONSTRAINT `users_wallet_unique` UNIQUE(`wallet`)
 );
