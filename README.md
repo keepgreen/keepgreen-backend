@@ -30,6 +30,8 @@ cp .env.example .env
 
 # don't forget to update .env with your own variables.
 
+# It needs keepgreen database created for migration.
+
 # run migrate schema to mariadb
 $ npm run db:push
 ```
