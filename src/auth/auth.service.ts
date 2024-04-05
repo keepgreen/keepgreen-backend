@@ -53,7 +53,7 @@ export class AuthService {
     }
 
     const userExists = await this.db
-      .select()
+      .select({ id: schema.users.id, email: schema.users.email })
       .from(schema.users)
       .where(eq(schema.users.email, user.email));
 
@@ -67,14 +67,26 @@ export class AuthService {
     });
   }
 
+  async generateReferral() {
+    const createId = init({
+      random: Math.random,
+      length: 6,
+      fingerprint: 'keepgreen',
+    });
+    let referral = createId();
+    const user = await this.db
+      .select({ referral: schema.users.referral })
+      .from(schema.users)
+      .where(eq(schema.users.referral, referral));
+    if (user.length > 0) {
+      referral = createId();
+    }
+    return referral;
+  }
+
   async registerUser(user) {
     try {
-      const createId = init({
-        random: Math.random,
-        length: 10,
-        fingerprint: 'keepgreen',
-      });
-      const referralCode = createId();
+      const referralCode = await this.generateReferral();
       const newUser = {
         email: user.email,
         firstName: user.firstName,
@@ -86,7 +98,7 @@ export class AuthService {
       await this.db.insert(schema.users).values(newUser);
 
       const userExists = await this.db
-        .select()
+        .select({ id: schema.users.id, email: schema.users.email })
         .from(schema.users)
         .where(eq(schema.users.email, user.email));
 
@@ -97,7 +109,9 @@ export class AuthService {
         sub: userExists[0].id,
       });
     } catch {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(
+        `Server couldn't register the new user`,
+      );
     }
   }
 }
