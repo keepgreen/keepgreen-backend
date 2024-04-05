@@ -6,6 +6,7 @@ import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as schema from 'src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { ConfigService } from '@nestjs/config';
+import { UserWalletDto } from './dto/user.wallet.dto';
 
 @Injectable()
 export class UserService {
@@ -70,5 +71,34 @@ export class UserService {
     if (user.length === 0) throw new BadRequestException('User not Found.');
 
     return user[0];
+  }
+
+  async updateWallet(userWalletDto: UserWalletDto, accessToken) {
+    const decoded = this.jwtService.decode(accessToken);
+    const id = decoded.sub;
+    const { wallet } = userWalletDto;
+
+    const userWallet = await this.db
+      .select({
+        wallet: schema.users.wallet,
+      })
+      .from(schema.users)
+      .where(eq(schema.users.id, id));
+
+    if (userWallet?.[0].wallet == wallet) {
+      throw new BadRequestException(
+        'This wallet is already saved for this user.',
+      );
+    }
+
+    try {
+      await this.db
+        .update(schema.users)
+        .set({ wallet: wallet })
+        .where(eq(schema.users.id, id));
+    } catch (error) {
+      throw new BadRequestException('Error');
+    }
+    return;
   }
 }

@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { UserNicknameDto } from './dto/user.nickname.dto';
 import { Response } from 'express';
+import { UserWalletDto } from './dto/user.wallet.dto';
 
 @Controller('user')
 export class UserController {
@@ -43,5 +44,13 @@ export class UserController {
   async getProfile(@Req() req) {
     const accessToken = req.headers.authorization.split(' ')[1];
     return await this.userService.getProfile(accessToken);
+  }
+
+  @Post('wallet')
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(ValidationPipe)
+  async updateWallet(@Req() req, @Body() userWalletDto: UserWalletDto) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+    return await this.userService.updateWallet(userWalletDto, accessToken);
   }
 }
