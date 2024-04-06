@@ -36,7 +36,7 @@ export class UserController {
     @Body() userNicknameDto: UserNicknameDto,
   ) {
     await this.userService.checkNickname(userNicknameDto);
-    return res.status(HttpStatus.OK).send('nickname available.');
+    return res.status(HttpStatus.OK).json({ message: 'nickname available.' });
   }
 
   @UseGuards(AuthGuard('jwt'))
