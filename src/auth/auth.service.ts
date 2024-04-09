@@ -13,6 +13,9 @@ import { eq } from 'drizzle-orm';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { init } from '@paralleldrive/cuid2';
+import { AuthAccessTokenDto } from './dto/auth.accesstoken.google.dto';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { google } = require('google-auth-library');
 
 @Injectable()
 export class AuthService {
@@ -48,6 +51,7 @@ export class AuthService {
       throw new BadRequestException('Unauthenticated');
     }
 
+    console.log(user);
     if (await this.isTokenExpired(user.accessToken)) {
       throw new UnauthorizedException('User not authorized');
     }
@@ -113,5 +117,43 @@ export class AuthService {
         `Server couldn't register the new user`,
       );
     }
+  }
+
+  async signInGoogleMobile(accessTokenGoogle: AuthAccessTokenDto) {
+    const { accessToken } = accessTokenGoogle;
+
+    const clientGoogle = this.getGoogleClientMobile();
+
+    try {
+      const result = await clientGoogle.verifyIdToken({
+        idToken: accessToken,
+        audience: this.configService.get<string>('GOOGLE_CLIENT_ID_MOBILE'),
+      });
+      const userGoogle = result.getPayload();
+
+      const userExists = await this.db
+        .select({ id: schema.users.id, email: schema.users.email })
+        .from(schema.users)
+        .where(eq(schema.users.email, userGoogle.email));
+
+      if (userExists.length === 0) {
+        return this.registerUser(userGoogle);
+      }
+
+      return await this.generateJwt({
+        email: userExists[0].email,
+        sub: userExists[0].id,
+      });
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Error');
+    }
+  }
+
+  private getGoogleClientMobile() {
+    return new google.auth.OAuth2({
+      clientId: this.configService.get<string>('GOOGLE_CLIENT_ID_MOBILE'),
+      clientSecret: this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
+    });
   }
 }

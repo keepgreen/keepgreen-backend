@@ -1,8 +1,18 @@
-import { Controller, Get, UseGuards, Request, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Req,
+  Res,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  Post,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
-// import { CheckTokenExpiryGuard } from './auth.guard';
+import { AuthAccessTokenDto } from './dto/auth.accesstoken.google.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,8 +24,17 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleLoginCallback(@Request() req, @Res() res: Response) {
+  async googleLoginCallback(@Req() req, @Res() res: Response) {
     const response = await this.authService.signInGoogle(req.user);
     res.json(response);
+  }
+
+  @Post('google/login')
+  @UsePipes(ValidationPipe)
+  async googleLoginMobile(
+    @Res() res: Response,
+    @Body() authAccessTokenDto: AuthAccessTokenDto,
+  ) {
+    res.json(await this.authService.signInGoogleMobile(authAccessTokenDto));
   }
 }

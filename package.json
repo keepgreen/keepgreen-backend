@@ -37,6 +37,7 @@
     "cookie-parser": "^1.4.6",
     "drizzle-orm": "^0.30.6",
     "express-session": "^1.18.0",
+    "google-auth-library": "^9.7.0",
     "helmet": "^7.1.0",
     "mysql2": "^3.9.3",
     "nanoid": "^5.0.6",
