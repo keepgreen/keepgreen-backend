@@ -25,8 +25,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleLoginCallback(@Req() req, @Res() res: Response) {
-    const response = await this.authService.signInGoogle(req.user);
-    res.json(response);
+    res.json(await this.authService.signInGoogle(req.user));
   }
 
   @Post('google/login')

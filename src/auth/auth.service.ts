@@ -14,8 +14,7 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { init } from '@paralleldrive/cuid2';
 import { AuthAccessTokenDto } from './dto/auth.accesstoken.google.dto';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { google } = require('google-auth-library');
+import { AuthGoogleUserDataDto } from './dto/auth.google.user.data.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +50,6 @@ export class AuthService {
       throw new BadRequestException('Unauthenticated');
     }
 
-    console.log(user);
     if (await this.isTokenExpired(user.accessToken)) {
       throw new UnauthorizedException('User not authorized');
     }
@@ -122,15 +120,13 @@ export class AuthService {
   async signInGoogleMobile(accessTokenGoogle: AuthAccessTokenDto) {
     const { accessToken } = accessTokenGoogle;
 
-    const clientGoogle = this.getGoogleClientMobile();
+    const userGoogle = await this.getUserDataFromGoogle(accessToken);
+
+    if (!userGoogle) {
+      throw new BadRequestException('Wrong accessToken');
+    }
 
     try {
-      const result = await clientGoogle.verifyIdToken({
-        idToken: accessToken,
-        audience: this.configService.get<string>('GOOGLE_CLIENT_ID_MOBILE'),
-      });
-      const userGoogle = result.getPayload();
-
       const userExists = await this.db
         .select({ id: schema.users.id, email: schema.users.email })
         .from(schema.users)
@@ -150,10 +146,15 @@ export class AuthService {
     }
   }
 
-  private getGoogleClientMobile() {
-    return new google.auth.OAuth2({
-      clientId: this.configService.get<string>('GOOGLE_CLIENT_ID_MOBILE'),
-      clientSecret: this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
-    });
+  private async getUserDataFromGoogle(
+    accessToken: string,
+  ): Promise<AuthGoogleUserDataDto> {
+    try {
+      const url = this.configService.get<string>('GOOGLE_GET_DATA_URL');
+      return await axios.get(`${url}?alt=json&access_token=${accessToken}`);
+    } catch (error) {
+      console.log(error);
+    }
+    return;
   }
 }
