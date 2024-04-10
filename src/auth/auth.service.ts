@@ -104,7 +104,10 @@ export class AuthService {
         .from(schema.users)
         .where(eq(schema.users.email, user.email));
 
-      if (userExists.length === 0) throw new InternalServerErrorException();
+      if (userExists.length === 0)
+        throw new InternalServerErrorException(
+          `Even after registration couldn't find user`,
+        );
 
       return await this.generateJwt({
         email: userExists[0].email,
@@ -140,7 +143,7 @@ export class AuthService {
           lastName: userGoogle.given_name,
           picture: userGoogle.picture,
         };
-        return this.registerUser(user);
+        return await this.registerUser(user);
       }
 
       return await this.generateJwt({
