@@ -133,7 +133,13 @@ export class AuthService {
         .where(eq(schema.users.email, userGoogle.email));
 
       if (userExists.length === 0) {
-        return this.registerUser(userGoogle);
+        const user = {
+          email: userGoogle.email,
+          firstName: userGoogle.name,
+          lastName: userGoogle.given_name,
+          photoPath: userGoogle.picture,
+        }
+        return this.registerUser(user);
       }
 
       return await this.generateJwt({
