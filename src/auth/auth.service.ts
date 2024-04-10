@@ -110,7 +110,8 @@ export class AuthService {
         email: userExists[0].email,
         sub: userExists[0].id,
       });
-    } catch {
+    } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         `Server couldn't register the new user`,
       );
@@ -137,8 +138,8 @@ export class AuthService {
           email: userGoogle.email,
           firstName: userGoogle.name,
           lastName: userGoogle.given_name,
-          photoPath: userGoogle.picture,
-        }
+          picture: userGoogle.picture,
+        };
         return this.registerUser(user);
       }
 
