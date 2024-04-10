@@ -48,7 +48,7 @@ export class UserService {
         .where(eq(schema.users.id, id));
     } catch (error) {
       console.log(error);
-      throw new BadRequestException('aff');
+      throw new BadRequestException(`Couldn't register user nickname`);
     }
 
     return;

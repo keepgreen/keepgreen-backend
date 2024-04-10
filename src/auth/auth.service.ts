@@ -14,7 +14,6 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { init } from '@paralleldrive/cuid2';
 import { AuthAccessTokenDto } from './dto/auth.accesstoken.google.dto';
-import { AuthGoogleUserDataDto } from './dto/auth.google.user.data.dto';
 
 @Injectable()
 export class AuthService {
@@ -135,7 +134,6 @@ export class AuthService {
         .select({ id: schema.users.id, email: schema.users.email })
         .from(schema.users)
         .where(eq(schema.users.email, userGoogle.email));
-
       if (userExists.length === 0) {
         const user = {
           email: userGoogle.email,
@@ -156,12 +154,13 @@ export class AuthService {
     }
   }
 
-  private async getUserDataFromGoogle(
-    accessToken: string,
-  ): Promise<AuthGoogleUserDataDto> {
+  private async getUserDataFromGoogle(accessToken: string) {
     try {
       const url = this.configService.get<string>('GOOGLE_GET_DATA_URL');
-      return await axios.get(`${url}?alt=json&access_token=${accessToken}`);
+      const response = await axios.get(
+        `${url}?alt=json&access_token=${accessToken}`,
+      );
+      return response.data;
     } catch (error) {
       console.log(error);
     }
