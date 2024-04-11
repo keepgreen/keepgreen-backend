@@ -39,8 +39,8 @@ export class UserController {
     return res.status(HttpStatus.OK).json({ message: 'nickname available.' });
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
   async getProfile(@Req() req) {
     const accessToken = req.headers.authorization.split(' ')[1];
     return await this.userService.getProfile(accessToken);
