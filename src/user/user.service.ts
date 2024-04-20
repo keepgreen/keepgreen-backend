@@ -4,8 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as schema from 'src/drizzle/schema';
-import { eq } from 'drizzle-orm';
-import { ConfigService } from '@nestjs/config';
+import { desc, eq } from 'drizzle-orm';
 import { UserWalletDto } from './dto/user.wallet.dto';
 
 @Injectable()
@@ -13,7 +12,6 @@ export class UserService {
   constructor(
     @Inject(DrizzleAsyncProvider) private db: MySql2Database<typeof schema>,
     private jwtService: JwtService,
-    private configService: ConfigService,
   ) {}
 
   async checkNickname(userNicknameDto: UserNicknameDto) {
@@ -100,5 +98,25 @@ export class UserService {
       throw new BadRequestException('Error');
     }
     return;
+  }
+
+  async getBalance(accessToken) {
+    const decoded = this.jwtService.decode(accessToken);
+    const id = decoded.sub;
+
+    const userBalance = await this.db
+      .select({
+        balance: schema.balances.balance,
+      })
+      .from(schema.balances)
+      .where(eq(schema.balances.idUser, id))
+      .orderBy(desc(schema.balances.id))
+      .limit(1);
+
+    if (userBalance.length === 0) {
+      return { balance: 0 };
+    }
+
+    return { balance: Number(userBalance[0].balance) };
   }
 }

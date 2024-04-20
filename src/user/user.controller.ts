@@ -53,4 +53,12 @@ export class UserController {
     const accessToken = req.headers.authorization.split(' ')[1];
     return await this.userService.updateWallet(userWalletDto, accessToken);
   }
+
+  @Get('balance')
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(ValidationPipe)
+  async getBalance(@Req() req) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+    return await this.userService.getBalance(accessToken);
+  }
 }
