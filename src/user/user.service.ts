@@ -4,14 +4,17 @@ import { JwtService } from '@nestjs/jwt';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as schema from 'src/drizzle/schema';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { UserWalletDto } from './dto/user.wallet.dto';
+import { UserEmailAccountDeleteDto } from './dto/user.email.account.delete.dto';
+import { EmailService } from 'src/mailer/EmailService';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(DrizzleAsyncProvider) private db: MySql2Database<typeof schema>,
     private jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async checkNickname(userNicknameDto: UserNicknameDto) {
@@ -118,5 +121,76 @@ export class UserService {
     }
 
     return { balance: Number(userBalance[0].balance) };
+  }
+
+  async userDeletion(userEmailAccountDeleteDto: UserEmailAccountDeleteDto) {
+    const { email } = userEmailAccountDeleteDto;
+    const user = await this.db
+      .select({
+        id: schema.users.id,
+      })
+      .from(schema.users)
+      .where(eq(schema.users.email, email));
+
+    if (user.length === 0) return { message: 'success' };
+
+    await this.db.insert(schema.userDelete).values({
+      email: email,
+    });
+
+    const result = await this.db
+      .select({ key: schema.userDelete.key })
+      .from(schema.userDelete)
+      .where(eq(schema.userDelete.email, email))
+      .orderBy(desc(schema.userDelete.id))
+      .limit(1);
+
+    if (result.length === 0) return { message: 'success' };
+
+    await this.emailService.sendEmail(
+      email,
+      'Account Delete | Keep Green',
+      `
+        <main style="display:flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; text-align: center;">
+          <div style="width: 100%; text-align: center;">
+            <img src="https://keepgreen.xyz/keepgreen.png" alt="Keep Green" style="width: 220px">
+          </div>
+          <h1 style="color: #20E09B; border-bottom: 1px solid #19C487">Account Delete</h1>
+          <p>Sorry to see you go! To permanently delete your account, please <a href="https://keepgreen.xyz/user/delete-confirm?email=${email}&tk=${result[0].key}">click here.</a></p>
+          <div style="color: #19C487; margin-top: 15px">
+            Keep Green @ 2024
+          </div>
+        </main>
+      `,
+    );
+    return { message: 'success' };
+  }
+
+  async deleteConfirm(email, tk) {
+    await this.db
+      .update(schema.userDelete)
+      .set({ flagValidDelete: 1 })
+      .where(
+        and(eq(schema.userDelete.email, email), eq(schema.userDelete.key, tk)),
+      );
+
+    const result = await this.db
+      .select({ flagValidDelete: schema.userDelete.flagValidDelete })
+      .from(schema.userDelete)
+      .where(eq(schema.userDelete.email, email))
+      .orderBy(desc(schema.userDelete.id))
+      .limit(1);
+
+    if (!result || result[0].flagValidDelete != 1) {
+      return {
+        message:
+          'The request to remove the account could not be confirmed, please try again or contact support.',
+      };
+    }
+
+    return {
+      message:
+        'We have confirmed your request to remove the account, we are working on it, it may take up to 3 days.',
+    };
   }
 }

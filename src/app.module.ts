@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { UserModule } from './user/user.module';
 import { QuestsModule } from './quests/quests.module';
+import { MailerConfigModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { QuestsModule } from './quests/quests.module';
     DrizzleModule,
     UserModule,
     QuestsModule,
+    MailerConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],

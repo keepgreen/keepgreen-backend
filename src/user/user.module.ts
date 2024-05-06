@@ -7,6 +7,7 @@ import { GoogleStrategy } from 'src/strategy/google.strategy';
 import { JwtStrategy } from 'src/strategy/jwt.strategy';
 import { drizzleProvider } from 'src/drizzle/drizzle.provider';
 import { JwtModule } from '@nestjs/jwt';
+import { EmailService } from 'src/mailer/EmailService';
 
 @Module({
   imports: [
@@ -22,6 +23,12 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [UserController],
-  providers: [UserService, GoogleStrategy, JwtStrategy, ...drizzleProvider],
+  providers: [
+    UserService,
+    GoogleStrategy,
+    JwtStrategy,
+    ...drizzleProvider,
+    EmailService,
+  ],
 })
 export class UserModule {}

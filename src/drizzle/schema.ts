@@ -7,6 +7,7 @@ import {
   int,
   text,
   decimal,
+  index,
 } from 'drizzle-orm/mysql-core';
 
 export const users = mysqlTable('users', {
@@ -93,4 +94,25 @@ export const questsCompletedRelations = relations(
       references: [users.id],
     }),
   }),
+);
+
+export const userDelete = mysqlTable(
+  'user-delete',
+  {
+    id: int('id').primaryKey().autoincrement(),
+    email: varchar('email', { length: 256 })
+      .notNull()
+      .references(() => users.email),
+    key: varchar('key', { length: 30 })
+      .$defaultFn(() => createId())
+      .unique(),
+    flagValidDelete: int('flag_valid_delete').default(0),
+    text: text('text'),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => {
+    return {
+      emailIdx: index('email_idx').on(table.email),
+    };
+  },
 );

@@ -9,12 +9,14 @@ import {
   Res,
   Req,
   Get,
+  Render,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { UserNicknameDto } from './dto/user.nickname.dto';
 import { Response } from 'express';
 import { UserWalletDto } from './dto/user.wallet.dto';
+import { UserEmailAccountDeleteDto } from './dto/user.email.account.delete.dto';
 
 @Controller('user')
 export class UserController {
@@ -60,5 +62,26 @@ export class UserController {
   async getBalance(@Req() req) {
     const accessToken = req.headers.authorization.split(' ')[1];
     return await this.userService.getBalance(accessToken);
+  }
+
+  @Get('delete')
+  @Render('user/delete')
+  async delete() {
+    return {};
+  }
+
+  @Get('delete-confirm')
+  @Render('user/delete-confirm')
+  async deleteConfirm(@Req() req) {
+    const { email, tk } = req.query;
+    return await this.userService.deleteConfirm(email, tk);
+  }
+
+  @Post('delete')
+  @UsePipes(ValidationPipe)
+  async deleteAction(
+    @Body() userEmailAccountDeleteDto: UserEmailAccountDeleteDto,
+  ) {
+    return await this.userService.userDeletion(userEmailAccountDeleteDto);
   }
 }

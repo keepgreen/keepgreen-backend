@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Account Delete | Keep Green</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="/main.css">
+    </head>
+
+    <body>
+        <main class="flex min-h-screen flex-col items-center justify-between p-5">
+            <div class="z-10 w-full max-w-5xl items-center justify-between text-sm lg:flex">
+                <div
+                    class="fixed  left-0 flex h-48 w-full items-end justify-center from-white via-white lg:static lg:size-auto">
+                    <img src="/keepgreen.png" alt="Keep Green" width="220">
+                </div>
+            </div>
+
+            <section id="delete-my-acc" class="flex flex-col w-full md:max-w-xl lg:max-w-5xl">
+                <h1 class="w-full border-b-2 md:max-w-xl border-b-secondary text-lg font-bold">Delete My Account</h1>
+                <p class="w-full mt-5 md:max-w-xl">
+                    {{ message }}
+                </p>
+            </section>
+
+            <div class="flex mb-32 justify-between text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
+                <span class="text-xs text-secondary">Keep Green @ 2024</span>
+            </div>
+        </main>
+    </body>
+</html>

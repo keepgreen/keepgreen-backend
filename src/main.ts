@@ -1,18 +1,16 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import * as session from 'express-session';
 import helmet from 'helmet';
+import { resolve } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.use(
-    session({
-      secret:
-        '649d3abd8561a36108de5c141cb48daef11eb9223a416357e838a9674b8147b8',
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(resolve('./src/public'));
+  app.setBaseViewsDir(resolve('./src/views'));
+  app.setViewEngine('hbs');
+
   app.use(helmet());
   app.enableCors();
   await app.listen(3000);

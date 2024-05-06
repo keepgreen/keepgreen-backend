@@ -8,6 +8,34 @@
       "when": 1713646199210,
       "tag": "0000_magenta_arachne",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714955159136,
+      "tag": "0001_loose_loa",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714955330742,
+      "tag": "0002_dizzy_killraven",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1714955403344,
+      "tag": "0003_oval_talisman",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1714957548623,
+      "tag": "0004_yellow_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }
